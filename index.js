@@ -5,57 +5,17 @@ const hostname='localhost';
 const bodyParser=require('body-parser');
 const port=3000;
 
-
+const dishRouter=require('./routes/dishRouter');
+const promoRouter=require('./routes/promoRouter');
+const leaderRouter=require('./routes/leaderRouter');
 
 const app =express();
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.all('/dishes',(req,res,next)=>{
-    res.statusCode=200;
-    res.setHeader('Content-Type','text/plain');
-    next();
-});
-app.get('/dishes',(req,res,next)=>{
-  res.end('Will send all the dishes to you');
-});
 
-app.post('/dishes',(req,res,next)=>{
-  res.end('will add the dish: '+req.body.name+'with details '+req.body.description);
-});
-app.put('/dishes',(req,res,next)=>{
-  res.statusCode=403;
-  res.end('PUT operation not supported for /Dishes')
-})
-
-app.delete('/dishes',(req,res,next)=>{
-  res.end('deleting all the dishes to you!');
-});
-
-
-
-
-
-
-app.get('/dishes/:dishId',(req,res,next)=>{
-res.end('Will send detials of dish: '+ req.params.dishId +'to you !');
-});
-
-app.post('/dishes/:dishId',(req,res,next)=>{
-  res.statusCode=403;
-  res.end('POST operation not supported for /Dishes/'+req.params.dishId);
-});
-app.put('/dishes/:dishId',(req,res,next)=>{
-
-res.write(' updating  dish : '+req.params.dishId+'\n');
-res.end('will update the dish : '+req.body.name+' with details : '+req.body.description);
-});
-
-app.delete('/dishes/:dishId',(req,res,next)=>{
-res.end('deleting  dish : '+req.params.dishId);
-});
-
-
-
+app.use('/dishes',dishRouter);
+app.use('/promotions',promoRouter);
+app.use('/leaders',leaderRouter);
 
 app.use(express.static(__dirname+'/public'));
 app.use((req,res,next)=>{
@@ -65,8 +25,7 @@ app.use((req,res,next)=>{
   res.end('<html><body><h1>This is an express server</h1></body></html>');
 });
 
-const server=http.createServer(app);
 
-server.listen(port,hostname,()=>{
+app.listen(port,hostname,()=>{
   console.log(`Server running at http://${hostname}:${port}`)
 });
